@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm update && babel src --out-dir lib",
     "prepublish": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "babel test/test.js --out-file test/test-compiled.js && node test/test-compiled.js && rimraf test/test-compiled.js"
   },
   "author": "Andrey Pasvistelik",
   "license": "ISC",
@@ -26,6 +26,12 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-plugin-transform-regenerator": "^6.24.1",
-    "babel-polyfill": "^6.23.0"
+    "babel-polyfill": "^6.23.0",
+    "rimraf": "^2.6.1",
+    "node-fetch": "^1.7.1"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "body-parser": "^1.18.2"
   }
 }
