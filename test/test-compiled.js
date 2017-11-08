@@ -34,7 +34,7 @@ var simpleRoutesForTest = [{ type: "bus", number: "1" }, { type: "bus", number: 
                         for (var i = 0, n = vehicles.length, vehicle = vehicles[0]; i < n; vehicle = vehicles[++i]) {
                             console.log("Vehicle " + vehicle.localId + ": " + vehicle.route.type + " " + vehicle.route.number + ", coords: lat= " + vehicle.lat + ", lng=" + vehicle.lng);
                         }
-                        console.log();
+                        console.log(vehicles);
                     }, 2000);
 
                 case 3:
