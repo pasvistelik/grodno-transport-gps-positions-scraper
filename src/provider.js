@@ -66,7 +66,7 @@ class GrodnoPositionsScraper{
                 }
                 currentVehicle.lat = vehicle.lat / 1000000;
                 currentVehicle.lng = vehicle.lon / 1000000;
-                currentVehicle.timestamp = (new Date(vehicle.lasttime+" GMT").toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })).toString();;
+                currentVehicle.timestamp = (new Date(vehicle.lasttime+" GMT").toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })).toString();
                 currentVehicle.localId = vehicle.id;
                 currentVehicle.speedInLastMoment = vehicle.speed;
                 currentVehicle.way = null;
@@ -83,7 +83,12 @@ class GrodnoPositionsScraper{
         var self = this;
         setTimeout(test, updatingInterval);
         async function test(){
-            await self.updatePositions();
+            try {
+                await self.updatePositions();
+            }
+            catch(e) {
+                console.log(e);
+            }
             setTimeout(test, updatingInterval);
         }
     }
