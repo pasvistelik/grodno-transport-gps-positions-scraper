@@ -5,6 +5,7 @@ import ProviderConfig from './config';
 class GrodnoPositionsScraper{
     async initialize(routesForAssotiating, updatingInterval = 5000){
         this.associationsWithRoutes = [];
+        this.readyToEjectVehicles = [];
 
         // Берем все известные провайдеру маршруты:
         const grodnoRoutes = await getJsonFromUrl(ProviderConfig.apiGetRoutesUrl);
@@ -55,15 +56,16 @@ class GrodnoPositionsScraper{
             for (let vehicle = returnedVehicles[0], currentVehicleRoute, i = 0, n = returnedVehicles.length; i < n; vehicle = returnedVehicles[++i]){
                 let currentVehicle = this.grodnoVehicles[parseInt(vehicle.id)];
                 if (currentVehicle == null){
-                    currentVehicleRoute = this.associationsWithRoutes[parseInt(vehicle.rid)];
-                    if (currentVehicleRoute == null){
-                        console.log("Не найдена связь с маршрутом: "+vehicle.rid);
-                        continue;
-                    }
-                    currentVehicle = this.grodnoVehicles[parseInt(vehicle.id)] = {
-                        route: currentVehicleRoute
-                    };
+                    currentVehicle = this.grodnoVehicles[parseInt(vehicle.id)] = {};
                 }
+
+                currentVehicleRoute = this.associationsWithRoutes[parseInt(vehicle.rid)];
+                if (currentVehicleRoute == null){
+                    console.log("Не найдена связь с маршрутом: "+vehicle.rid);
+                    //continue;
+                }
+                currentVehicle.route = currentVehicleRoute;
+
                 currentVehicle.lat = vehicle.lat / 1000000;
                 currentVehicle.lng = vehicle.lon / 1000000;
                 currentVehicle.timestamp = (new Date(vehicle.lasttime+" GMT").toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })).toString();
@@ -71,6 +73,8 @@ class GrodnoPositionsScraper{
                 currentVehicle.speedInLastMoment = vehicle.speed;
                 currentVehicle.way = null;
                 currentVehicle.trip = null;
+
+                this.readyToEjectVehicles[parseInt(vehicle.id)] = true;
 
                 //console.log(currentVehicle);
             }
@@ -83,19 +87,20 @@ class GrodnoPositionsScraper{
         var self = this;
         setTimeout(test, updatingInterval);
         async function test(){
-            try {
-                await self.updatePositions();
-            }
-            catch(e) {
-                console.log(e);
-            }
+            await self.updatePositions();
             setTimeout(test, updatingInterval);
         }
     }
 
-    getVehicles(){
+    ejectUpdatedVehicles(){
         let result = [];
-        for(let key in this.grodnoVehicles) result.push(this.grodnoVehicles[key]);
+        for(let key in this.grodnoVehicles) {
+            let currentVehicle = this.grodnoVehicles[key];
+            if (this.readyToEjectVehicles[parseInt(currentVehicle.localId)]) {
+                result.push(currentVehicle);
+                this.readyToEjectVehicles[parseInt(currentVehicle.localId)] = false;
+            }
+        }
         return result;
     }
 
@@ -123,7 +128,19 @@ function binaryFind(array, predicateForArrayItem)
 }
 
 async function getJsonFromUrl(strReq) {
-    var response = await fetch(strReq);
+    let ok = false;
+    var response = null;
+    while(!ok) {
+        try {
+            response = await fetch(strReq);
+            ok = true;
+        }
+        catch(e) {
+            console.log(e.message);
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+    }
+    
     return await response.json();
 }
 
