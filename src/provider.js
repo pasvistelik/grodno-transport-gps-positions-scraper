@@ -55,12 +55,13 @@ class GrodnoPositionsScraper{
             //console.log(returnedVehicles);
             for (let vehicle = returnedVehicles[0], currentVehicleRoute, i = 0, n = returnedVehicles.length; i < n; vehicle = returnedVehicles[++i]){
                 let currentVehicle = this.grodnoVehicles[parseInt(vehicle.id)];
-                if (currentVehicle == null){
+                let needCreateVehicle = currentVehicle == null;
+                if (needCreateVehicle){
                     currentVehicle = this.grodnoVehicles[parseInt(vehicle.id)] = {};
                 }
 
                 currentVehicleRoute = this.associationsWithRoutes[parseInt(vehicle.rid)];
-                if (currentVehicleRoute == null){
+                if (currentVehicleRoute == null && needCreateVehicle){
                     console.log("Не найдена связь с маршрутом: "+vehicle.rid);
                     //continue;
                 }
