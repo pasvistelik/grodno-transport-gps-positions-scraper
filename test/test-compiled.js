@@ -30,11 +30,11 @@ var simpleRoutesForTest = [{ type: "bus", number: "1" }, { type: "bus", number: 
                 case 2:
 
                     setInterval(function () {
-                        var vehicles = provider.getVehicles();
+                        var vehicles = provider.ejectUpdatedVehicles();
                         for (var i = 0, n = vehicles.length, vehicle = vehicles[0]; i < n; vehicle = vehicles[++i]) {
-                            console.log("Vehicle " + vehicle.localId + ": " + vehicle.route.type + " " + vehicle.route.number + ", coords: lat= " + vehicle.lat + ", lng=" + vehicle.lng);
+                            console.log("Vehicle " + vehicle.localId + ": " + vehicle.route.type + " " + vehicle.route.number + ", coords: lat= " + vehicle.lat + ", lng=" + vehicle.lng + ", date= " + vehicle.date);
                         }
-                        console.log(vehicles);
+                        console.log();
                     }, 2000);
 
                 case 3:

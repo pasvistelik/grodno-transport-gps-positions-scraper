@@ -10,9 +10,9 @@ let simpleRoutesForTest = [{type: "bus", number: "1"},{type: "bus", number: "2"}
     await provider.initialize(simpleRoutesForTest, 2000);
     
     setInterval(function(){
-        let vehicles = provider.getVehicles();
+        let vehicles = provider.ejectUpdatedVehicles();
         for(let i = 0, n = vehicles.length, vehicle = vehicles[0]; i < n; vehicle = vehicles[++i]){
-            console.log("Vehicle "+vehicle.localId+": "+vehicle.route.type+" "+vehicle.route.number+", coords: lat= "+vehicle.lat+", lng="+vehicle.lng);
+            console.log("Vehicle "+vehicle.localId+": "+vehicle.route.type+" "+vehicle.route.number+", coords: lat= "+vehicle.lat+", lng="+vehicle.lng+", date= "+vehicle.date);
         }
         console.log();
     }, 2000);

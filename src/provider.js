@@ -2,6 +2,12 @@ import fetch from 'node-fetch';
 import ProviderConfig from './config';
 //ToDo: create and use this:... import binaryFind from 'binarySearch/lib/binaryFind';
 
+function findDate(string) {
+    var dateTime = /(\d{1,2})\.(\d{1,2})\.(\d{4}) (\d{1,2}):(\d{1,2}):(\d{1,2})/;
+    var match = dateTime.exec(string);
+    return new Date(Number(match[2])+"."+Number(match[1])+"."+Number(match[3])+" "+Number(match[4])+":"+Number(match[5])+":"+Number(match[6])+" GMT");
+}
+
 class GrodnoPositionsScraper{
     async initialize(routesForAssotiating, updatingInterval = 5000){
         this.associationsWithRoutes = [];
@@ -69,7 +75,9 @@ class GrodnoPositionsScraper{
 
                 currentVehicle.lat = vehicle.lat / 1000000;
                 currentVehicle.lng = vehicle.lon / 1000000;
-                currentVehicle.timestamp = (new Date(vehicle.lasttime+" GMT").toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })).toString();
+                //console.log(vehicle.lasttime);
+                //currentVehicle.timestamp = (new Date(vehicle.lasttime+" GMT").toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' })).toString();
+                currentVehicle.date = findDate(vehicle.lasttime);
                 currentVehicle.localId = vehicle.id;
                 currentVehicle.speedInLastMoment = vehicle.speed;
                 currentVehicle.way = null;
