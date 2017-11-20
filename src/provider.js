@@ -73,6 +73,13 @@ class GrodnoPositionsScraper{
                 }
                 currentVehicle.route = currentVehicleRoute;
 
+                let oldLat = null, oldLng = null, oldDateStr = null;
+                if(!needCreateVehicle){
+                    oldLat = currentVehicle.lat;
+                    oldLng = currentVehicle.lng;
+                    oldDateStr = currentVehicle.date.toString();
+                }
+                
                 currentVehicle.lat = vehicle.lat / 1000000;
                 currentVehicle.lng = vehicle.lon / 1000000;
                 //console.log(vehicle.lasttime);
@@ -83,7 +90,9 @@ class GrodnoPositionsScraper{
                 currentVehicle.way = null;
                 currentVehicle.trip = null;
 
-                this.readyToEjectVehicles[parseInt(vehicle.id)] = true;
+                if(currentVehicle.lat !== oldLat || currentVehicle.lng !== oldLng || currentVehicle.date.toString() !== oldDateStr){
+                    this.readyToEjectVehicles[parseInt(vehicle.id)] = true;
+                }
 
                 //console.log(currentVehicle);
             }
